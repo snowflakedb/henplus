@@ -33,13 +33,13 @@
         <pathelement path="${classes}" />
      </path>
 
-     <target name="server">
-        <taskdef name="ant-server" classname="net.sweetohm.ant.server.ServerTask">
-           <classpath>
-              <pathelement location="${lib}/build/sat-0.7.jar" />
-           </classpath>
-        </taskdef>
+     <taskdef name="ant-server" classname="net.sweetohm.ant.server.ServerTask">
+        <classpath>
+           <pathelement location="${lib}/build/sat-0.7.jar" />
+        </classpath>
+     </taskdef>
 
+     <target name="server">
         <ant-server/>
      </target>
 
@@ -62,7 +62,7 @@
 
      <target name="compile" depends="prepare,Version.java" 
 	     description="compile it">
-        <javac debug="true" source="1.5" target="1.5" includeantruntime="no"
+        <javac debug="true" source="1.3" target="1.3" 
 	       encoding="ISO-8859-1" srcdir="${src}" destdir="${classes}">
            <classpath refid="compile.classpath" />
         </javac>

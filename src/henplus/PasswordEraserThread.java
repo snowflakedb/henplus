@@ -1,78 +1,85 @@
 /*
- * This is free software, licensed under the Gnu Public License (GPL) get a copy from <http://www.gnu.org/licenses/gpl.html> $Id:
- * PasswordEraserThread.java,v 1.5 2004-03-05 23:34:38 hzeller Exp $ author: Henner Zeller <H.Zeller@acm.org> inspired by hack
- * provided in <http://java.sun.com/features/2002/09/pword_mask.html> Thanks to alec <acgnacgn@yahoo.co.uk> to point me to this.
+ * This is free software, licensed under the Gnu Public License (GPL)
+ * get a copy from <http://www.gnu.org/licenses/gpl.html>
+ * $Id: PasswordEraserThread.java,v 1.5 2004-03-05 23:34:38 hzeller Exp $
+ * author: Henner Zeller <H.Zeller@acm.org>
+ * inspired by hack provided in
+ *  <http://java.sun.com/features/2002/09/pword_mask.html>
+ * Thanks to alec <acgnacgn@yahoo.co.uk> to point me to this.
  */
 package henplus;
 
 /**
- * Erase password as it is typed. Since we do not have access to the tty in a way to switch off echoing, we constantly override any
- * stuff written with spaces. This is a hack, since it is kinda busy process doing this in a loop and it may still expose letters
- * from the password for the fraction of a second. However, this is better than nothing, right ?
+ * Erase password as it is typed. Since we do not have access to
+ * the tty in a way to switch off echoing, we constantly override
+ * any stuff written with spaces. This is a hack, since it is kinda
+ * busy process doing this in a loop and it may still expose letters
+ * from the password for the fraction of a second. However, this is
+ * better than nothing, right ?
  */
 class PasswordEraserThread extends Thread {
-
-    private final String _eraser;
-    private boolean _running;
-    private boolean _onHold;
+    private final String eraser;
+    private boolean running;
+    private boolean onHold;
 
     /**
-     * @param prompt
-     *            The prompt displayed to the user
+     *@param prompt The prompt displayed to the user
      */
-    public PasswordEraserThread(final String prompt) {
+    public PasswordEraserThread(String prompt) {
         /*
-         * we are erasing by writing the prompt followed by spaces from the
-         * beginning of the line
+         * we are erasing by writing the prompt followed by spaces
+         * from the beginning of the line
          */
-        _eraser = "\r" + prompt + "                \r" + prompt;
-        _running = true;
-        _onHold = true;
+        eraser = "\r" + prompt + "                \r" + prompt;
+        running = true;
+        onHold = true;
     }
+
 
     /**
      * Begin masking until asked to stop.
      */
-    @Override
     public void run() {
-        while (_running) {
-            if (_onHold) {
+        while(running) {
+            if (onHold) {
                 try {
                     synchronized (this) {
                         wait();
                     }
-                } catch (final InterruptedException iex) {
+                }
+                catch (InterruptedException iex) {
                     // ignore.
                 }
-                if (_onHold) {
+                if (onHold) {
                     continue;
                 }
             }
 
             try {
                 Thread.sleep(1); // yield.
-            } catch (final InterruptedException iex) {
+            }
+            catch (InterruptedException iex) {
                 // ignore
             }
-            if (_running && !_onHold) {
-                System.out.print(_eraser);
+            if (running && !onHold) {
+                System.out.print(eraser);
             }
             System.out.flush();
         }
     }
 
     public synchronized void holdOn() {
-        _onHold = true;
+        onHold = true;
         notify();
     }
 
     public synchronized void goOn() {
-        _onHold = false;
+        onHold = false;
         notify();
     }
 
     public synchronized void done() {
-        _running = false;
+        running = false;
         notify();
     }
 }

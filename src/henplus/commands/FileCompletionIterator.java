@@ -1,80 +1,80 @@
 /*
- * This is free software, licensed under the Gnu Public License (GPL) get a copy from <http://www.gnu.org/licenses/gpl.html> $Id:
- * FileCompletionIterator.java,v 1.5 2004-05-31 10:48:22 hzeller Exp $ author: Henner Zeller <H.Zeller@acm.org>
+ * This is free software, licensed under the Gnu Public License (GPL)
+ * get a copy from <http://www.gnu.org/licenses/gpl.html>
+ * $Id: FileCompletionIterator.java,v 1.5 2004-05-31 10:48:22 hzeller Exp $ 
+ * author: Henner Zeller <H.Zeller@acm.org>
  */
 package henplus.commands;
 
+import java.util.Iterator;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
- * FIXME: first simple implementation..
+ * fixme. first simple implementation..
  */
-public class FileCompletionIterator implements Iterator<String> {
+public class FileCompletionIterator implements Iterator {
+    private String dirList[];
+    private String matchName;
+    private String nextFileName;
+    private String completePrefix;
+    private int index;
 
-    private String[] _dirList;
-    private String _matchName;
-    private String _nextFileName;
-    private String _completePrefix;
-    private int _index;
-
-    public FileCompletionIterator(final String partialCommand, final String lastWord) {
+    public FileCompletionIterator(String partialCommand, String lastWord) {
         String startFile;
-        final int lastPos = partialCommand.lastIndexOf(' ');
-        startFile = lastPos >= 0 ? partialCommand.substring(lastPos + 1) : "";
+        int lastPos = partialCommand.lastIndexOf(' ');
+        startFile = ((lastPos >= 0) 
+                     ? partialCommand.substring(lastPos+1)
+                     : "");
+        //startFile = prefix + startFile;
+        //System.err.println("f: " + startFile);
 
-        try {
-            final int lastDirectory = startFile.lastIndexOf(File.separator);
-            String dirName = ".";
-            _completePrefix = "";
-            if (lastDirectory > 0) {
-                dirName = startFile.substring(0, lastDirectory);
-                startFile = startFile.substring(lastDirectory + 1);
-                _completePrefix = dirName + File.separator;
-            }
-            final File f = new File(dirName).getCanonicalFile();
-            final boolean isDir = f.isDirectory();
-            _dirList = isDir ? f.list() : f.getParentFile().list();
-            _matchName = startFile;
-        } catch (final IOException e) {
-            _dirList = null;
-            _matchName = null;
-        }
-        _index = 0;
+	try {
+	    int lastDirectory = startFile.lastIndexOf(File.separator);
+	    String dirName = ".";
+	    completePrefix = "";
+	    if (lastDirectory > 0) {
+		dirName = startFile.substring(0, lastDirectory);
+		startFile = startFile.substring(lastDirectory + 1 );
+		completePrefix = dirName + File.separator;
+	    }
+	    File f = (new File(dirName)).getCanonicalFile();
+	    boolean isDir = f.isDirectory();
+	    dirList = (isDir)
+		? f.list()
+		: f.getParentFile().list();
+	    matchName = startFile;
+	}
+	catch (IOException e) {
+	    dirList = null;
+	    matchName = null;
+	}
+	index = 0;
     }
 
     // this iterator _requires_, that hasNext() is called before next().
 
-    @Override
     public boolean hasNext() {
-        if (_dirList == null) {
-            return false;
-        }
-        while (_index < _dirList.length) {
-            _nextFileName = _dirList[_index++];
-            if (_nextFileName.startsWith(_matchName)) {
-                final File f = new File(_completePrefix + _nextFileName);
-                if (f.isDirectory()) {
-                    _nextFileName += File.separator;
-                }
-                return true;
-            }
-        }
-        return false;
+	if (dirList == null) return false;
+	while (index < dirList.length) {
+	    nextFileName = dirList[index++];
+	    if (nextFileName.startsWith(matchName)) {
+		File f = new File(completePrefix + nextFileName);
+		if (f.isDirectory()) {
+		    nextFileName += File.separator;
+		}
+		return true;
+	    }
+	}
+	return false;
     }
-
-    @Override
-    public String next() {
-        return _completePrefix + _nextFileName;
-    }
-
-    @Override
-    public void remove() {
-    }
+    public Object  next() { return completePrefix + nextFileName; }
+    public void remove() {}
 }
 
 /*
- * Local variables: c-basic-offset: 4 compile-command:
- * "ant -emacs -find build.xml" End:
+ * Local variables:
+ * c-basic-offset: 4
+ * compile-command: "ant -emacs -find build.xml"
+ * End:
  */
