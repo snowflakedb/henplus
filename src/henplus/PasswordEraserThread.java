@@ -17,69 +17,84 @@ package henplus;
  * from the password for the fraction of a second. However, this is
  * better than nothing, right ?
  */
-class PasswordEraserThread extends Thread {
-    private final String eraser;
-    private boolean running;
-    private boolean onHold;
+class PasswordEraserThread extends Thread
+{
+  private final String eraser;
+  private boolean running;
+  private boolean onHold;
 
-    /**
-     *@param prompt The prompt displayed to the user
+  /**
+   * @param prompt The prompt displayed to the user
+   */
+  public PasswordEraserThread(String prompt)
+  {
+    /*
+     * we are erasing by writing the prompt followed by spaces
+     * from the beginning of the line
      */
-    public PasswordEraserThread(String prompt) {
-        /*
-         * we are erasing by writing the prompt followed by spaces
-         * from the beginning of the line
-         */
-        eraser = "\r" + prompt + "                \r" + prompt;
-        running = true;
-        onHold = true;
-    }
+    eraser = "\r" + prompt + "                \r" + prompt;
+    running = true;
+    onHold = true;
+  }
 
 
-    /**
-     * Begin masking until asked to stop.
-     */
-    public void run() {
-        while(running) {
-            if (onHold) {
-                try {
-                    synchronized (this) {
-                        wait();
-                    }
-                }
-                catch (InterruptedException iex) {
-                    // ignore.
-                }
-                if (onHold) {
-                    continue;
-                }
-            }
-
-            try {
-                Thread.sleep(1); // yield.
-            }
-            catch (InterruptedException iex) {
-                // ignore
-            }
-            if (running && !onHold) {
-                System.out.print(eraser);
-            }
-            System.out.flush();
+  /**
+   * Begin masking until asked to stop.
+   */
+  public void run()
+  {
+    while (running)
+    {
+      if (onHold)
+      {
+        try
+        {
+          synchronized (this)
+          {
+            wait();
+          }
         }
-    }
+        catch (InterruptedException iex)
+        {
+          // ignore.
+        }
+        if (onHold)
+        {
+          continue;
+        }
+      }
 
-    public synchronized void holdOn() {
-        onHold = true;
-        notify();
+      try
+      {
+        Thread.sleep(1); // yield.
+      }
+      catch (InterruptedException iex)
+      {
+        // ignore
+      }
+      if (running && !onHold)
+      {
+        System.out.print(eraser);
+      }
+      System.out.flush();
     }
+  }
 
-    public synchronized void goOn() {
-        onHold = false;
-        notify();
-    }
+  public synchronized void holdOn()
+  {
+    onHold = true;
+    notify();
+  }
 
-    public synchronized void done() {
-        running = false;
-        notify();
-    }
+  public synchronized void goOn()
+  {
+    onHold = false;
+    notify();
+  }
+
+  public synchronized void done()
+  {
+    running = false;
+    notify();
+  }
 }

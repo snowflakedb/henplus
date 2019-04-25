@@ -8,71 +8,84 @@ package henplus.sqlmodel;
  * <p>Title: ColumnFkInfo</p>
  * <p>Description:<br>
  * Created on: 01.08.2003</p>
- * @version $Id: ColumnFkInfo.java,v 1.4 2004-09-22 11:49:32 magrokosmos Exp $ 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
+ * @version $Id: ColumnFkInfo.java,v 1.4 2004-09-22 11:49:32 magrokosmos Exp $
  */
-public final class ColumnFkInfo {
-        
-    private String _fkName;
-    private String _pkTable;
-    private String _pkColumn;
-        
-    public ColumnFkInfo(String fkName, String pkTable, String pkColumn) {
-        _fkName = fkName;
-        _pkTable = pkTable;
-        _pkColumn = pkColumn;
-    }
+public final class ColumnFkInfo
+{
 
-    /**
-     * @return the name of the foreign key.
-     */
-    public String getFkName() {
-        return _fkName;
-    }
-    
-    public boolean equals (Object other) {
-        if (other != null && other instanceof ColumnFkInfo) {
-            ColumnFkInfo o = (ColumnFkInfo)other;
-            if ( _fkName != null && !_fkName.equals(o.getFkName())
-                 || _fkName == null && o.getFkName() != null ) {
-                return false;
-            }
-            else if ( _pkTable != null && !_pkTable.equals(o.getPkTable())
-                      || _pkTable == null && o.getPkTable() != null ) {
-                return false;
-            }
-            else if ( _pkColumn != null && !_pkColumn.equals(o.getPkColumn())
-                      || _pkColumn == null && o.getPkColumn() != null ) {
-                return false;
-            }
-            else {
-                return true;
-            }
-        }
+  private String _fkName;
+  private String _pkTable;
+  private String _pkColumn;
+
+  public ColumnFkInfo(String fkName, String pkTable, String pkColumn)
+  {
+    _fkName = fkName;
+    _pkTable = pkTable;
+    _pkColumn = pkColumn;
+  }
+
+  /**
+   * @return the name of the foreign key.
+   */
+  public String getFkName()
+  {
+    return _fkName;
+  }
+
+  public boolean equals(Object other)
+  {
+    if (other != null && other instanceof ColumnFkInfo)
+    {
+      ColumnFkInfo o = (ColumnFkInfo) other;
+      if (_fkName != null && !_fkName.equals(o.getFkName())
+          || _fkName == null && o.getFkName() != null)
+      {
         return false;
+      }
+      else if (_pkTable != null && !_pkTable.equals(o.getPkTable())
+               || _pkTable == null && o.getPkTable() != null)
+      {
+        return false;
+      }
+      else if (_pkColumn != null && !_pkColumn.equals(o.getPkColumn())
+               || _pkColumn == null && o.getPkColumn() != null)
+      {
+        return false;
+      }
+      else
+      {
+        return true;
+      }
     }
+    return false;
+  }
 
-    /**
-     * @return the primary key colum name (should this return a Column?)
-     */
-    public String getPkColumn() {
-        return _pkColumn;
-    }
+  /**
+   * @return the primary key colum name (should this return a Column?)
+   */
+  public String getPkColumn()
+  {
+    return _pkColumn;
+  }
 
-    /**
-     * @return the name of the primary key table (should this return a Table?)
-     */
-    public String getPkTable() {
-        return _pkTable;
-    }
-    
-    public String toString() {
-        StringBuffer sb = new StringBuffer( "ColumnFkInfo [" );
-        sb.append( "fkName: " ).append( _fkName );
-        sb.append( ", pkTable: " ).append( _pkTable );
-        sb.append( ", pkColumn: " ).append( _pkColumn );
-        sb.append( "]" );
-        return sb.toString();
-    }
+  /**
+   * @return the name of the primary key table (should this return a Table?)
+   */
+  public String getPkTable()
+  {
+    return _pkTable;
+  }
+
+  public String toString()
+  {
+    StringBuffer sb = new StringBuffer("ColumnFkInfo [");
+    sb.append("fkName: ").append(_fkName);
+    sb.append(", pkTable: ").append(_pkTable);
+    sb.append(", pkColumn: ").append(_pkColumn);
+    sb.append("]");
+    return sb.toString();
+  }
 
 }

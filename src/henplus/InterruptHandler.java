@@ -9,12 +9,13 @@
  */
 package henplus;
 
-public interface InterruptHandler {
+public interface InterruptHandler
+{
 
-    void pushInterruptable(Interruptable t);
+  void pushInterruptable(Interruptable t);
 
-    void popInterruptable();
+  void popInterruptable();
 
-    void reset();
+  void reset();
 
 }

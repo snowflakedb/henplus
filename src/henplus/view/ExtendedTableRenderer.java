@@ -10,128 +10,162 @@ import henplus.OutputDevice;
  * <p>Title: ExtendedTableRenderer</p>
  * <p>Description:<br>
  * Created on: 25.07.2003</p>
- * @version $Id: ExtendedTableRenderer.java,v 1.5 2004-03-05 23:34:38 hzeller Exp $ 
+ *
  * @author <a href="mailto:martin.grotzke@javakaffee.de">Martin Grotzke</a>
+ * @version $Id: ExtendedTableRenderer.java,v 1.5 2004-03-05 23:34:38 hzeller Exp $
  */
-public class ExtendedTableRenderer extends TableRenderer {
+public class ExtendedTableRenderer extends TableRenderer
+{
 
-    public ExtendedTableRenderer(ColumnMetaData[] meta, OutputDevice out,
-                                 String separator, boolean showHeader,
-                                 boolean showFooter) 
+  public ExtendedTableRenderer(ColumnMetaData[] meta, OutputDevice out,
+                               String separator, boolean showHeader,
+                               boolean showFooter)
+  {
+    super(meta, out, separator, showHeader, showFooter);
+  }
+
+  public ExtendedTableRenderer(ColumnMetaData[] meta, OutputDevice out)
+  {
+    this(meta, out, "|", true, true);
+  }
+
+  /**
+   * Checks for each element in the array its type, so can handle <code>ExtendedColumn</code> correctly.
+   *
+   * @param row
+   */
+  protected void updateColumnWidths(Column[] row)
+  {
+    int metaIndex = 0;
+    for (int i = 0; i < row.length; ++i)
     {
-        super (meta, out, separator, showHeader, showFooter);
+      if (row[i] instanceof ExtendedColumn && ((ExtendedColumn) row[i]).getColspan() > 1)
+      {
+        ExtendedColumn col = (ExtendedColumn) row[i];
+        metaIndex = updateMetaWidth(metaIndex, col);
+
+      }
+      else
+      {
+        meta[i].updateWidth(row[i].getWidth());
+        metaIndex++;
+      }
+    }
+  }
+
+  private int updateMetaWidth(int metaIndex, ExtendedColumn col)
+  {
+    int span = col.getColspan();
+    // calculate the summarized width of concerned tables
+    int sumWidth = 0;
+    int participating = 0;  // count the DISPLAYED columns
+    for (int j = metaIndex; j < (metaIndex + span); j++)
+    {
+      if (!meta[j].doDisplay())
+      {
+        continue;
+      }
+      sumWidth += meta[j].getWidth();
+      participating++;
+    }
+    // test if the spanning column's width is greater than the sum
+    if (col.getWidth() > sumWidth)
+    {
+      // to each meta col add the same amount
+      int diff = (col.getWidth() - sumWidth) / participating;
+      for (int j = metaIndex; j < (metaIndex + span); j++)
+      {
+        if (!meta[j].doDisplay())
+        {
+          continue;
+        }
+        meta[j].updateWidth(meta[j].getWidth() + diff);
+      }
+    }
+    // set the metaIndex
+    metaIndex += span;
+    return metaIndex;
+  }
+
+  /**
+   * Overwrites the <code>TableRenderer</code>s implementation for special
+   * handling of <code>ExtendedColumn</code>s.
+   */
+  protected boolean printColumns(Column[] currentRow, boolean hasMoreLines)
+  {
+    int metaIndex = 0;
+    // iterate over the elements of the given row
+    for (int i = 0; i < currentRow.length; ++i)
+    {
+      if (currentRow[i] instanceof ExtendedColumn)
+      {
+        ExtendedColumn col = (ExtendedColumn) currentRow[i];
+        hasMoreLines = printColumn(col, hasMoreLines, metaIndex);
+        metaIndex += col.getColspan();
+      }
+      else
+      {
+        if (!meta[metaIndex].doDisplay())
+        {
+          continue;
+        }
+        hasMoreLines = printColumn(currentRow[i], hasMoreLines, metaIndex);
+        metaIndex++;
+      }
+    }
+    return hasMoreLines;
+  }
+
+  protected boolean printColumn(ExtendedColumn col,
+                                boolean hasMoreLines,
+                                int metaIndex)
+  {
+    String txt;
+    out.print(" ");
+    // get summarized width of meta cols
+    int span = col.getColspan();
+    int width = 0;
+    if (span > 1)
+    {
+      for (int i = metaIndex; i < (metaIndex + span); i++)
+      {
+        if (!meta[i].doDisplay())
+        {
+          continue;
+        }
+        width += meta[i].getWidth();
+      }
+      // for each column after the first one add spaces for the surrounding spaces and the separator
+      width += (span - 1) * 3;
+    }
+    else
+    {
+      width = meta[metaIndex].getWidth();
     }
 
-    public ExtendedTableRenderer(ColumnMetaData[] meta, OutputDevice out) {
-        this(meta, out, "|", true, true);
+    txt = formatString(col.getNextLine(),
+                       ' ',
+                       width,
+                       col.getAlignment());
+    hasMoreLines |= col.hasNextLine();
+
+    if (col.isBoldRequested())
+    {
+      out.attributeBold();
     }
-    
-    /**
-     * Checks for each element in the array its type, so can handle <code>ExtendedColumn</code> correctly.
-     * @param row
-     */
-    protected void updateColumnWidths(Column[] row) {
-        int metaIndex = 0;
-        for (int i = 0; i < row.length; ++i) {
-            if ( row[i] instanceof ExtendedColumn && ((ExtendedColumn) row[i]).getColspan() > 1 ) {
-                ExtendedColumn col = (ExtendedColumn) row[i];
-                metaIndex = updateMetaWidth(metaIndex, col);
-                
-            }
-            else {
-                meta[i].updateWidth(row[i].getWidth());
-                metaIndex++;
-            }
-        }
+    else if (col.isNull())
+    {
+      out.attributeGrey();
     }
 
-    private int updateMetaWidth(int metaIndex, ExtendedColumn col) {
-        int span = col.getColspan();
-        // calculate the summarized width of concerned tables
-        int sumWidth = 0;
-        int participating = 0;  // count the DISPLAYED columns
-        for (int j = metaIndex; j < (metaIndex + span); j++) {
-            if (!meta[j].doDisplay())
-                continue;
-            sumWidth += meta[j].getWidth();
-            participating++;
-        }
-        // test if the spanning column's width is greater than the sum
-        if (col.getWidth() > sumWidth) {
-            // to each meta col add the same amount
-            int diff = (col.getWidth() - sumWidth) / participating;
-            for (int j = metaIndex; j < (metaIndex + span); j++) {
-                if (!meta[j].doDisplay())
-                    continue;
-                meta[j].updateWidth( meta[j].getWidth() + diff );
-            }
-        }
-        // set the metaIndex
-        metaIndex += span;
-        return metaIndex;
+    out.print(txt);
+
+    if (col.isNull() || col.isBoldRequested())
+    {
+      out.attributeReset();
     }
 
-    /**
-     * Overwrites the <code>TableRenderer</code>s implementation for special
-     * handling of <code>ExtendedColumn</code>s.
-     */
-    protected boolean printColumns(Column[] currentRow, boolean hasMoreLines) {
-        int metaIndex = 0;
-        // iterate over the elements of the given row
-        for (int i = 0; i < currentRow.length; ++i) {
-            if ( currentRow[i] instanceof ExtendedColumn ) {
-                ExtendedColumn col =(ExtendedColumn)currentRow[i]; 
-                hasMoreLines = printColumn(col, hasMoreLines, metaIndex);
-                metaIndex += col.getColspan();
-            }
-            else {
-                if (!meta[metaIndex].doDisplay())
-                    continue;
-                hasMoreLines = printColumn(currentRow[i], hasMoreLines, metaIndex);
-                metaIndex++;
-            }
-        }
-        return hasMoreLines;
-    }
-
-    protected boolean printColumn(ExtendedColumn col,
-                                  boolean hasMoreLines,
-                                  int metaIndex) {
-        String txt;
-        out.print(" ");
-        // get summarized width of meta cols
-        int span = col.getColspan();
-        int width = 0;
-        if ( span > 1 ) {
-            for ( int i = metaIndex; i < (metaIndex + span); i++ ) {
-                if (!meta[i].doDisplay())
-                    continue;
-                width += meta[i].getWidth();
-            }
-            // for each column after the first one add spaces for the surrounding spaces and the separator
-            width += (span - 1) * 3;
-        }
-        else {
-            width = meta[metaIndex].getWidth();
-        }
-        
-        txt = formatString( col.getNextLine(),
-                            ' ',
-                            width,
-                            col.getAlignment());
-        hasMoreLines |= col.hasNextLine();
-        
-        if ( col.isBoldRequested() )
-            out.attributeBold();
-        else if (col.isNull())
-            out.attributeGrey();
-            
-        out.print(txt);
-        
-        if ( col.isNull() || col.isBoldRequested() )
-            out.attributeReset();
-            
-        out.print(colSeparator);
-        return hasMoreLines;
-    }
+    out.print(colSeparator);
+    return hasMoreLines;
+  }
 }

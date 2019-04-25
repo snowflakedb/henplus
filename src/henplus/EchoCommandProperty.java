@@ -14,40 +14,49 @@ import henplus.property.BooleanPropertyHolder;
  * The Property echo-commands that simply registers itself at the
  * command dispatcher to echo the commands it is executing.
  */
-public final class EchoCommandProperty 
-    extends BooleanPropertyHolder 
-    implements ExecutionListener 
+public final class EchoCommandProperty
+    extends BooleanPropertyHolder
+    implements ExecutionListener
 {
-    private CommandDispatcher _dispatcher;
+  private CommandDispatcher _dispatcher;
 
-    public EchoCommandProperty(CommandDispatcher disp) {
-        super(false);
-        _dispatcher = disp;
-    }
-    
-    public String getDefaultValue() { 
-        return "off"; 
-    }
+  public EchoCommandProperty(CommandDispatcher disp)
+  {
+    super(false);
+    _dispatcher = disp;
+  }
 
-    public void booleanPropertyChanged(boolean echoCommands) {
-        if (echoCommands) {
-            _dispatcher.addExecutionListener(this);
-        }
-        else {
-            _dispatcher.removeExecutionListener(this);
-        }
-    }
+  public String getDefaultValue()
+  {
+    return "off";
+  }
 
-    public String getShortDescription() {
-        return "echo commands prior to execution.";
+  public void booleanPropertyChanged(boolean echoCommands)
+  {
+    if (echoCommands)
+    {
+      _dispatcher.addExecutionListener(this);
     }
+    else
+    {
+      _dispatcher.removeExecutionListener(this);
+    }
+  }
 
-    //-- Execution listener
+  public String getShortDescription()
+  {
+    return "echo commands prior to execution.";
+  }
 
-    public void beforeExecution(SQLSession session, String command) {
-        HenPlus.msg().println(command.trim());
-    }
-    public void afterExecution(SQLSession session, String command, int result){
-        /* don't care */
-    }
+  //-- Execution listener
+
+  public void beforeExecution(SQLSession session, String command)
+  {
+    HenPlus.msg().println(command.trim());
+  }
+
+  public void afterExecution(SQLSession session, String command, int result)
+  {
+    /* don't care */
+  }
 }

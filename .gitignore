@@ -1,3 +1,6 @@
+*.swp
+.idea/
+henplus.iml
 src/henplus/Version.java
 /.eclipse-bin
 /build

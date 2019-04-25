@@ -10,33 +10,39 @@ import henplus.PropertyRegistry;
 /**
  * handle session local properties.
  */
-public class SessionPropertyCommand extends AbstractPropertyCommand {
+public class SessionPropertyCommand extends AbstractPropertyCommand
+{
 
-    private final HenPlus _henplus;
+  private final HenPlus _henplus;
 
-    public SessionPropertyCommand(final HenPlus henplus) {
-        _henplus = henplus;
-    }
+  public SessionPropertyCommand(final HenPlus henplus)
+  {
+    _henplus = henplus;
+  }
 
-    @Override
-    protected String getSetCommand() {
-        return "set-session-property";
-    }
+  @Override
+  protected String getSetCommand()
+  {
+    return "set-session-property";
+  }
 
-    @Override
-    protected String getHelpHeader() {
-        return "SQL-connection specific";
-    }
+  @Override
+  protected String getHelpHeader()
+  {
+    return "SQL-connection specific";
+  }
 
-    @Override
-    protected PropertyRegistry getRegistry() {
-        return _henplus.getCurrentSession().getPropertyRegistry();
-    }
+  @Override
+  protected PropertyRegistry getRegistry()
+  {
+    return _henplus.getCurrentSession().getPropertyRegistry();
+  }
 
-    @Override
-    public boolean requiresValidSession(final String cmd) {
-        return true;
-    }
+  @Override
+  public boolean requiresValidSession(final String cmd)
+  {
+    return true;
+  }
 }
 
 /*

@@ -1,7 +1,7 @@
 /*
  * This is free software, licensed under the Gnu Public License (GPL)
  * get a copy from <http://www.gnu.org/licenses/gpl.html>
- * 
+ *
  * author: Henner Zeller <H.Zeller@acm.org>
  */
 package henplus.commands;
@@ -13,33 +13,37 @@ import henplus.AbstractCommand;
 /**
  * document me.
  */
-public class StatusCommand extends AbstractCommand {
-    /**
-     * returns the command-strings this command can handle.
-     */
-    public String[] getCommandList() {
-	return new String[] {
-	    "status"
-	};
-    }
-    
-    /**
-     * execute the command given.
-     */
-    public int execute(SQLSession session, String cmd, String param) {
-	HenPlus.msg().println("URL:    " + session.getURL());
-	HenPlus.msg().print  ("uptime: ");
-	TimeRenderer.printTime(session.getUptime(), HenPlus.msg());
-	HenPlus.msg().println("; statements: " + session.getStatementCount());
-	return SUCCESS;
-    }
+public class StatusCommand extends AbstractCommand
+{
+  /**
+   * returns the command-strings this command can handle.
+   */
+  public String[] getCommandList()
+  {
+    return new String[]{
+        "status"
+    };
+  }
 
-    /**
-     * return a descriptive string.
-     */
-    public String getShortDescription() {
-	return "show status of this connection";
-    }
+  /**
+   * execute the command given.
+   */
+  public int execute(SQLSession session, String cmd, String param)
+  {
+    HenPlus.msg().println("URL:    " + session.getURL());
+    HenPlus.msg().print("uptime: ");
+    TimeRenderer.printTime(session.getUptime(), HenPlus.msg());
+    HenPlus.msg().println("; statements: " + session.getStatementCount());
+    return SUCCESS;
+  }
+
+  /**
+   * return a descriptive string.
+   */
+  public String getShortDescription()
+  {
+    return "show status of this connection";
+  }
 }
 
 /*

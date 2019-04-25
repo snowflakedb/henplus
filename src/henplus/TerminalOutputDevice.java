@@ -11,27 +11,34 @@ import java.io.PrintStream;
 /**
  * The OutputDevice to write to.
  */
-public class TerminalOutputDevice extends PrintStreamOutputDevice {
-    private static final String BOLD   = "\033[1m";
-    private static final String NORMAL = "\033[m";
-    private static final String GREY   = "\033[1;30m";
+public class TerminalOutputDevice extends PrintStreamOutputDevice
+{
+  private static final String BOLD = "\033[1m";
+  private static final String NORMAL = "\033[m";
+  private static final String GREY = "\033[1;30m";
 
-    public TerminalOutputDevice(PrintStream out) {
-        super(out);
-    }
+  public TerminalOutputDevice(PrintStream out)
+  {
+    super(out);
+  }
 
-    public void attributeBold()  { 
-        print( BOLD );
-    }
-    public void attributeGrey()  { 
-        print( GREY );
-    }
+  public void attributeBold()
+  {
+    print(BOLD);
+  }
 
-    public void attributeReset() { 
-        print( NORMAL );
-    }
+  public void attributeGrey()
+  {
+    print(GREY);
+  }
 
-    public boolean isTerminal() {
-        return true;
-    }
+  public void attributeReset()
+  {
+    print(NORMAL);
+  }
+
+  public boolean isTerminal()
+  {
+    return true;
+  }
 }

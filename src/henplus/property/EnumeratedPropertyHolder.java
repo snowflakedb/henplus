@@ -1,7 +1,7 @@
 /*
  * This is free software, licensed under the Gnu Public License (GPL)
  * get a copy from <http://www.gnu.org/licenses/gpl.html>
- * $Id: EnumeratedPropertyHolder.java,v 1.6 2004-03-07 14:22:02 hzeller Exp $ 
+ * $Id: EnumeratedPropertyHolder.java,v 1.6 2004-03-07 14:22:02 hzeller Exp $
  * author: Henner Zeller <H.Zeller@acm.org>
  */
 package henplus.property;
@@ -15,88 +15,104 @@ import henplus.view.util.NameCompleter;
  * A PropertyHolder, that can change its values to a fixed set of
  * values.
  */
-public abstract class EnumeratedPropertyHolder extends PropertyHolder {
-    private final String _values[];
-    private final NameCompleter _completer;
+public abstract class EnumeratedPropertyHolder extends PropertyHolder
+{
+  private final String _values[];
+  private final NameCompleter _completer;
 
-    /**
-     * create a new EnumeratedPropertyHolder that gets an array of
-     * Strings with possible values of this property.
-     *
-     * @param enumeratedValues the Values this property can take.
-     */
-    public EnumeratedPropertyHolder(String[] enumeratedValues) {
-        _values = enumeratedValues;
-        _completer = new NameCompleter(enumeratedValues);
+  /**
+   * create a new EnumeratedPropertyHolder that gets an array of
+   * Strings with possible values of this property.
+   *
+   * @param enumeratedValues the Values this property can take.
+   */
+  public EnumeratedPropertyHolder(String[] enumeratedValues)
+  {
+    _values = enumeratedValues;
+    _completer = new NameCompleter(enumeratedValues);
+  }
+
+  /**
+   * same with collection as Input.
+   */
+  public EnumeratedPropertyHolder(Collection values)
+  {
+    this((String[]) values.toArray(new String[values.size()]));
+  }
+
+  /**
+   * do not override this method but the
+   * {@link #enumeratedPropertyChanged(int, String)} method instead.
+   */
+  protected final String propertyChanged(String newValue) throws Exception
+  {
+    if (newValue == null)
+    {
+      throw new Exception("'null' not a valid value");
+    }
+    newValue = newValue.trim();
+
+    Iterator possibleValues = _completer.getAlternatives(newValue);
+    if (possibleValues == null || !possibleValues.hasNext())
+    {
+      StringBuffer expected = new StringBuffer();
+      for (int i = 0; i < _values.length; ++i)
+      {
+        if (i != 0)
+        {
+          expected.append(", ");
+        }
+        expected.append(_values[i]);
+      }
+      throw new Exception("'" + newValue + "' does not match any of ["
+                          + expected.toString() + "]");
     }
 
-    /**
-     * same with collection as Input.
-     */
-    public EnumeratedPropertyHolder(Collection values) {
-        this((String[])values.toArray(new String[ values.size() ]));
+    String value = (String) possibleValues.next();
+    if (possibleValues.hasNext())
+    {
+      StringBuffer matching = new StringBuffer(value);
+      do
+      {
+        matching.append(", ");
+        matching.append((String) possibleValues.next());
+      }
+      while (possibleValues.hasNext());
+
+      throw new Exception("'" + newValue + "' ambiguous. Matches ["
+                          + matching.toString() + "]");
     }
 
-    /**
-     * do not override this method but the 
-     * {@link #enumeratedPropertyChanged(int, String)} method instead.
-     */
-    protected final String propertyChanged(String newValue) throws Exception {
-        if (newValue == null) {
-            throw new Exception("'null' not a valid value");
-        }
-        newValue = newValue.trim();
-
-        Iterator possibleValues = _completer.getAlternatives(newValue);
-        if (possibleValues == null || !possibleValues.hasNext()) {
-            StringBuffer expected = new StringBuffer();
-            for (int i=0; i < _values.length; ++i) {
-                if (i != 0) expected.append(", ");
-                expected.append(_values[i]);
-            }
-            throw new Exception("'" + newValue + "' does not match any of ["
-                                + expected.toString() + "]");
-        }
-
-        String value = (String) possibleValues.next();
-        if (possibleValues.hasNext()) {
-            StringBuffer matching = new StringBuffer(value);
-            do {
-                matching.append(", ");
-                matching.append((String) possibleValues.next());
-            } 
-            while (possibleValues.hasNext());
-            
-            throw new Exception("'" + newValue + "' ambiguous. Matches ["
-                                + matching.toString() + "]");
-        }
-
-        int index = -1;
-        // small size of array -- linear search acceptable
-        for (int i=0; i < _values.length; ++i) {
-            if (value.equals(_values[i])) {
-                index = i;
-                break;
-            }
-        }
-        
-        enumeratedPropertyChanged(index, value);
-        return value;
+    int index = -1;
+    // small size of array -- linear search acceptable
+    for (int i = 0; i < _values.length; ++i)
+    {
+      if (value.equals(_values[i]))
+      {
+        index = i;
+        break;
+      }
     }
 
-    /**
-     * to be overridden to get informed of the change and veto
-     * it.
-     * @param index the index of the property that changed
-     * @param value the new value of that property
-     * @throws Exception to veto that change.
-     */
-    protected abstract void enumeratedPropertyChanged(int index, String value)
-        throws Exception;
+    enumeratedPropertyChanged(index, value);
+    return value;
+  }
 
-    public Iterator completeValue(String partialValue) {
-        return _completer.getAlternatives(partialValue);
-    }
+  /**
+   * to be overridden to get informed of the change and veto
+   * it.
+   *
+   * @param index the index of the property that changed
+   * @param value the new value of that property
+   * @throws Exception to veto that change.
+   */
+  protected abstract void enumeratedPropertyChanged(int index, String value)
+  throws Exception;
+
+  public Iterator completeValue(String partialValue)
+  {
+    return _completer.getAlternatives(partialValue);
+  }
 }
 
 /*
