@@ -1,7 +1,7 @@
 /*
  * This is free software, licensed under the Gnu Public License (GPL)
  * get a copy from <http://www.gnu.org/licenses/gpl.html>
- * $Id: FileCompletionIterator.java,v 1.5 2004-05-31 10:48:22 hzeller Exp $ 
+ * $Id: FileCompletionIterator.java,v 1.5 2004-05-31 10:48:22 hzeller Exp $
  * author: Henner Zeller <H.Zeller@acm.org>
  */
 package henplus.commands;
@@ -13,63 +13,82 @@ import java.io.IOException;
 /**
  * fixme. first simple implementation..
  */
-public class FileCompletionIterator implements Iterator {
-    private String dirList[];
-    private String matchName;
-    private String nextFileName;
-    private String completePrefix;
-    private int index;
+public class FileCompletionIterator implements Iterator
+{
+  private String dirList[];
+  private String matchName;
+  private String nextFileName;
+  private String completePrefix;
+  private int index;
 
-    public FileCompletionIterator(String partialCommand, String lastWord) {
-        String startFile;
-        int lastPos = partialCommand.lastIndexOf(' ');
-        startFile = ((lastPos >= 0) 
-                     ? partialCommand.substring(lastPos+1)
-                     : "");
-        //startFile = prefix + startFile;
-        //System.err.println("f: " + startFile);
+  public FileCompletionIterator(String partialCommand, String lastWord)
+  {
+    String startFile;
+    int lastPos = partialCommand.lastIndexOf(' ');
+    startFile = ((lastPos >= 0)
+                 ? partialCommand.substring(lastPos + 1)
+                 : "");
+    //startFile = prefix + startFile;
+    //System.err.println("f: " + startFile);
 
-	try {
-	    int lastDirectory = startFile.lastIndexOf(File.separator);
-	    String dirName = ".";
-	    completePrefix = "";
-	    if (lastDirectory > 0) {
-		dirName = startFile.substring(0, lastDirectory);
-		startFile = startFile.substring(lastDirectory + 1 );
-		completePrefix = dirName + File.separator;
-	    }
-	    File f = (new File(dirName)).getCanonicalFile();
-	    boolean isDir = f.isDirectory();
-	    dirList = (isDir)
-		? f.list()
-		: f.getParentFile().list();
-	    matchName = startFile;
-	}
-	catch (IOException e) {
-	    dirList = null;
-	    matchName = null;
-	}
-	index = 0;
+    try
+    {
+      int lastDirectory = startFile.lastIndexOf(File.separator);
+      String dirName = ".";
+      completePrefix = "";
+      if (lastDirectory > 0)
+      {
+        dirName = startFile.substring(0, lastDirectory);
+        startFile = startFile.substring(lastDirectory + 1);
+        completePrefix = dirName + File.separator;
+      }
+      File f = (new File(dirName)).getCanonicalFile();
+      boolean isDir = f.isDirectory();
+      dirList = (isDir)
+                ? f.list()
+                : f.getParentFile().list();
+      matchName = startFile;
     }
-
-    // this iterator _requires_, that hasNext() is called before next().
-
-    public boolean hasNext() {
-	if (dirList == null) return false;
-	while (index < dirList.length) {
-	    nextFileName = dirList[index++];
-	    if (nextFileName.startsWith(matchName)) {
-		File f = new File(completePrefix + nextFileName);
-		if (f.isDirectory()) {
-		    nextFileName += File.separator;
-		}
-		return true;
-	    }
-	}
-	return false;
+    catch (IOException e)
+    {
+      dirList = null;
+      matchName = null;
     }
-    public Object  next() { return completePrefix + nextFileName; }
-    public void remove() {}
+    index = 0;
+  }
+
+  // this iterator _requires_, that hasNext() is called before next().
+
+  public boolean hasNext()
+  {
+    if (dirList == null)
+    {
+      return false;
+    }
+    while (index < dirList.length)
+    {
+      nextFileName = dirList[index++];
+      if (nextFileName.startsWith(matchName))
+      {
+        File f = new File(completePrefix + nextFileName);
+        if (f.isDirectory())
+        {
+          nextFileName += File.separator;
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public Object next()
+  {
+    return completePrefix + nextFileName;
+  }
+
+  public void remove()
+  {
+  }
 }
 
 /*

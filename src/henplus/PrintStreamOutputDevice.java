@@ -11,27 +11,56 @@ import java.io.PrintStream;
 /**
  * The OutputDevice to write to.
  */
-public class PrintStreamOutputDevice implements OutputDevice {
-    private final PrintStream _outStream;
+public class PrintStreamOutputDevice implements OutputDevice
+{
+  private final PrintStream _outStream;
 
-    public PrintStreamOutputDevice(PrintStream out) {
-        _outStream = out;
-    }
+  public PrintStreamOutputDevice(PrintStream out)
+  {
+    _outStream = out;
+  }
 
-    public void flush()            {  _outStream.flush();  }
-    public void write(byte[] buffer, int off, int len) {
-        _outStream.write(buffer, off, len);
-    }
-    public void print(String s)    { _outStream.print(s);  }
-    public void println(String s)  { _outStream.println(s);  }
-    public void println()          { _outStream.println(); }
+  public void flush()
+  {
+    _outStream.flush();
+  }
 
-    public void close() { _outStream.close(); }
+  public void write(byte[] buffer, int off, int len)
+  {
+    _outStream.write(buffer, off, len);
+  }
 
-    public void attributeBold()  { /* no attributes */ }
-    public void attributeGrey()  { /* no attributes */ }
+  public void print(String s)
+  {
+    _outStream.print(s);
+  }
 
-    public void attributeReset() { /* no attributes */ }
+  public void println(String s)
+  {
+    _outStream.println(s);
+  }
 
-    public boolean isTerminal() { return false; }
+  public void println()
+  {
+    _outStream.println();
+  }
+
+  public void close()
+  {
+    _outStream.close();
+  }
+
+  public void attributeBold()
+  { /* no attributes */ }
+
+  public void attributeGrey()
+  { /* no attributes */ }
+
+  public void attributeReset()
+  { /* no attributes */ }
+
+  public boolean isTerminal()
+  {
+    return false;
+  }
 }
