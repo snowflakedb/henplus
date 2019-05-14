@@ -1,3 +1,8 @@
+SFSQL
+======
+
+`sfsql` is the early version of Snowflake CLI based on `HenPlus`. It is customized to run internal tests, so the changes are maintained on this fork repo.
+
 HenPlus
 =======
 
