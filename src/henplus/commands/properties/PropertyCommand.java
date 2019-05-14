@@ -10,6 +10,7 @@ import henplus.io.ConfigurationContainer;
 import henplus.property.PropertyHolder;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 

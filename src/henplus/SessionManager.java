@@ -139,14 +139,14 @@ public final class SessionManager
     return _sessions.containsKey(sessionName);
   }
 
-  public void setCurrentSession(SQLSession session)
-  {
-    this._currentSession = session;
-  }
-
   public SQLSession getCurrentSession()
   {
     return _currentSession;
+  }
+
+  public void setCurrentSession(SQLSession session)
+  {
+    this._currentSession = session;
   }
 
   /*  =====================  Helper methods  ======================  */

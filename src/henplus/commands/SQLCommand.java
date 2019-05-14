@@ -12,10 +12,10 @@ import henplus.HenPlus;
 import henplus.PropertyRegistry;
 import henplus.SQLSession;
 import henplus.SigIntHandler;
-import henplus.property.PropertyHolder;
 import henplus.property.BooleanPropertyHolder;
-import henplus.view.util.NameCompleter;
+import henplus.property.PropertyHolder;
 import henplus.view.util.CancelWriter;
+import henplus.view.util.NameCompleter;
 
 import java.sql.ResultSet;
 import java.sql.Statement;

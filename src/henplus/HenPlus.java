@@ -30,28 +30,24 @@ import henplus.commands.TreeCommand;
 import henplus.commands.properties.PropertyCommand;
 import henplus.commands.properties.SessionPropertyCommand;
 import henplus.io.ConfigurationContainer;
-
-import java.io.BufferedReader;
-import java.io.EOFException;
-import java.io.File;
-import java.util.Iterator;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.Map;
-
 import org.gnu.readline.Readline;
 import org.gnu.readline.ReadlineLibrary;
+
+import java.io.BufferedReader;
+import java.io.EOFException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.Map;
 
 public class HenPlus implements Interruptable
 {
@@ -903,14 +899,14 @@ public class HenPlus implements Interruptable
     return _exitOnError;
   }
 
-  public boolean isVerbose()
-  {
-    return verbose;
-  }
-
   public boolean isQuiet()
   {
     return _quiet;
+  }
+
+  public boolean isVerbose()
+  {
+    return verbose;
   }
 }
 
