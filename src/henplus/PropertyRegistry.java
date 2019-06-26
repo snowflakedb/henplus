@@ -6,10 +6,10 @@
  */
 package henplus;
 
+import henplus.property.PropertyHolder;
+
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import henplus.property.PropertyHolder;
 
 /**
  * A Registry that binds names to Properties.

@@ -19,10 +19,10 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.SortedSet;
 
 /**
@@ -48,7 +48,6 @@ public class SQLSession implements Interruptable
    */
   public SQLSession(String url, String user, String password)
   throws IllegalArgumentException,
-         ClassNotFoundException,
          SQLException,
          IOException
   {
@@ -230,6 +229,10 @@ public class SQLSession implements Interruptable
        */
       props.setProperty("remarksReporting", "true");
     }
+    else if (_url.startsWith("jdbc:snowflake"))
+    {
+      props.put("CLIENT_SFSQL", true);
+    }
 
     /* try to connect directly with the url. Several JDBC-Drivers
      * allow to embed the username and password directly in the URL.
@@ -259,7 +262,15 @@ public class SQLSession implements Interruptable
 
     if (_conn == null)
     {
-      _conn = DriverManager.getConnection(_url, _username, _password);
+      if (_username != null)
+      {
+        props.put("user", _username);
+      }
+      if (_password != null)
+      {
+        props.put("password", _password);
+      }
+      _conn = DriverManager.getConnection(_url, props);
     }
 
     if (_conn != null && _username == null)

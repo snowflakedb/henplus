@@ -6,12 +6,12 @@
  */
 package henplus;
 
-import java.util.Iterator;
-import java.util.StringTokenizer;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+
+import java.util.Iterator;
+import java.util.StringTokenizer;
 
 /**
  * Implementation of a Command with default settings. Override
